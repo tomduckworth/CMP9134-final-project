@@ -71,7 +71,7 @@ stateDiagram-v2
     %% Relationships
     User --> RobotController : Sends Commands
     RobotController --> MissionLog : Generates Log
-    ```
+```
 
 ### 4. Sequence Diagram: System Communication
 
