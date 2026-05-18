@@ -1,10 +1,17 @@
-name: CI — Build, Test & Push
+name: CI/CD — Build, Test & Release
 
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - "v*.*.*"  # Triggers the workflow on semantic version tags
   pull_request:
     branches: [ "main" ]
+
+# Grant permissions to write packages to GitHub Container Registry (GHCR)
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   test:
@@ -24,10 +31,27 @@ jobs:
 
       - name: Static Analysis (Linting)
         run: |
-          # Only run flake8 on our refactored files, ignoring minor trailing newline rules
+          # Check styles, ignoring minor trailing newline rules
           flake8 legacy_stats.py test_stats.py --count --max-complexity=5 --show-source --statistics --ignore=W292
 
       - name: Run test suite
         run: |
           pytest test_stats.py -v
 
+      - name: Log in to the Container registry
+        # Only run this step if the push is a semantic version tag!
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        # Only run this step if the push is a semantic version tag!
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:${{ github.ref_name }}
