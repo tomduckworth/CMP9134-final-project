@@ -67,7 +67,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 px-4">
         <div class="container-fluid">
-            <span class="navbar-brand mb-0 h1 fw-bold text-primary">🤖 CMP9134 Ground Control</span>
+            <h1 class="navbar-brand mb-0 fs-4 fw-bold text-primary">🤖 CMP9134 Ground Control</h1>
             <div class="d-flex align-items-center">
                 <span class="badge bg-secondary fs-6 border border-light">User Role: COMMANDER</span>
             </div>
@@ -101,10 +101,10 @@
                     <h4 class="text-info border-bottom border-secondary pb-2">Detail: Move Robot Panel</h4>
                     
                     <div class="mt-3">
-                        <label class="form-label text-light fw-bold">Target X Coordinate (0-9):</label>
+                        <label class="form-label text-light fw-bold" for="inputX">Target X Coordinate (0-9):</label>
                         <input type="number" id="inputX" class="form-control bg-dark text-light border-secondary mb-3" min="0" max="9" value="0">
                         
-                        <label class="form-label text-light fw-bold">Target Y Coordinate (0-9):</label>
+                        <label class="form-label text-light fw-bold" for="inputY">Target Y Coordinate (0-9):</label>
                         <input type="number" id="inputY" class="form-control bg-dark text-light border-secondary mb-4" min="0" max="9" value="0">
                         
                         <button id="transmitBtn" class="btn btn-primary btn-transmit mb-3">TRANSMIT MOVE</button>
@@ -112,8 +112,8 @@
                         <button class="btn btn-outline-danger fw-bold w-100 py-2 mb-4">EMERGENCY STOP</button>
                     </div>
 
-                    <h6 class="text-secondary mb-2">Command Log:</h6>
-                    <div id="commandLog" class="log-box text-secondary">
+                    <h5 class="text-secondary mb-2 fs-6">Command Log:</h5>
+                    <div id="commandLog" class="log-box text-secondary" aria-live="polite">
                         Awaiting input...
                     </div>
                 </div>
