@@ -8,6 +8,9 @@ from dataclasses import dataclass
 from typing import Optional
 
 import requests
+from fastapi import FastAPI  # Added to support the app initialization
+from legacy_stats import router as legacy_router  # <-- Line 1 added here
+
 
 # ==============================================================================
 # 1. CONFIGURATION & TYPES
@@ -195,6 +198,11 @@ class GroundControlStation:
 # ==============================================================================
 # 4. ENTRY POINT & TEST SUITE
 # ==============================================================================
+
+# Initialize the FastAPI app and attach the legacy code
+app = FastAPI()
+app.include_router(legacy_router) # <-- Line 2 added here
+
 
 if __name__ == "__main__":
     print("\n" + "="*50)
