@@ -12,14 +12,20 @@ MAX_SCORE = 100.0
 
 
 class MissionStatsRequest(BaseModel):
-    """Pydantic model validating incoming payloads with auto-generated documentation."""
-    type: int = Field(..., description="Mission type ID (e.g., 1 for Recon, 2 for Transport)")
+    """Pydantic model validating incoming payloads."""
+    type: int = Field(
+        ..., description="Mission type ID (e.g., 1 or 2)"
+    )
     dist: float = Field(..., description="Total distance covered")
-    batt: float = Field(..., description="Battery consumption percentage used")
-    payload_weight: float = Field(default=0.0, description="Payload weight in kilograms")
+    batt: float = Field(..., description="Battery consumption percentage")
+    payload_weight: float = Field(
+        default=0.0, description="Payload weight in kilograms"
+    )
 
 
-def _compute_base_score(distance: float, battery: float, multiplier: float) -> float:
+def _compute_base_score(
+    distance: float, battery: float, multiplier: float
+) -> float:
     """Computes basic mission performance score safely."""
     if distance <= 0.0 or battery <= 0.0:
         return 0.0
@@ -45,15 +51,21 @@ def calc_stats(data: MissionStatsRequest):
     score = _compute_base_score(data.dist, data.batt, multiplier)
 
     # 2. Process conditional transport penalties
-    if status_name == "transport" and data.payload_weight > 50.0 and score > 0.0:
+    is_transport = status_name == "transport"
+    heavy_payload = data.payload_weight > 50.0
+    if is_transport and heavy_payload and score > 0.0:
         score -= (data.payload_weight * 0.1)
 
     # 3. Apply capping using our helper function
     final_score = _cap_score(score)
 
-    # 4. Safe parameterized representation of query logging (prevents SQL injection practices)
+    # 4. Safe parameterized representation of query logging
+    # (prevents SQL injection practices)
     query = "INSERT INTO stats (mission, score) VALUES (?, ?)"
-    print(f"[DB LOG PARAMETERIZED] {query} with variables: ({status_name}, {final_score})")
+    print(
+        f"[DB LOG PARAMETERIZED] {query} with variables: "
+        f"({status_name}, {final_score})"
+    )
 
     return {
         "status": "success",
