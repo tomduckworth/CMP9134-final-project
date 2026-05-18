@@ -102,3 +102,28 @@ sequenceDiagram
         D-->>C: Display Success
     end
 ```
+## 5. High-Level Architectural Pattern (Workshop 5, Task 1)
+Our Ground Control Station follows a **Layered Architecture** pattern. This separates concerns so that the user interface, the business logic, and the database do not directly depend on each other's internal code.
+
+* **Presentation Layer (User Interface):** Handled by our HTML/CSS/JS frontend dashboard. It captures user inputs and displays telemetry.
+* **Application/Business Layer (Controller):** Handled by our Python `GroundControlStation` class and `RobotClient`. It enforces safety boundaries, verifies user roles, and routes commands.
+* **Data Access Layer (Model):** Handled by our Python `AuditLogger` and the SQLite database (`mission_logs.db`), which are responsible for securely saving an immutable record of all system events.
+
+```mermaid
+flowchart TD
+    subgraph Presentation Layer
+        UI[Web Dashboard HTML/CSS]
+    end
+    
+    subgraph Business Logic Layer
+        GCS[Ground Control Station Core]
+        RC[Robot API Client]
+    end
+    
+    subgraph Data Access Layer
+        DB[(SQLite Mission Logs)]
+    end
+    
+    UI -->|HTTP POST coordinates| GCS
+    GCS -->|SQL INSERT| DB
+    GCS -->|REST API POST /move| RC
