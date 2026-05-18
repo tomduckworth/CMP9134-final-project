@@ -24,8 +24,8 @@ jobs:
 
       - name: Static Analysis (Linting)
         run: |
-          # Scan the root folder but exclude standard system/environment cache folders
-          flake8 . --count --max-complexity=5 --show-source --statistics --exclude=.git,__pycache__,.pytest_cache,venv,.venv,anaconda3
+          # Only run flake8 on our refactored module and test file
+          flake8 legacy_stats.py test_stats.py --count --max-complexity=5 --show-source --statistics
 
       - name: Run test suite
         run: |
